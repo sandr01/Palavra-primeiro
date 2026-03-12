@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "Palavra Primeiro",
+    "slug": "palavra-primeiro",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#2c1654"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.palavraprimeiro.app",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "Usado apenas para monitorar uso de apps bloqueados.",
+        "UIBackgroundModes": ["fetch", "remote-notification"]
+      },
+      "entitlements": {
+        "com.apple.developer.family-controls": true
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#2c1654"
+      },
+      "package": "com.palavraprimeiro.app",
+      "permissions": [
+        "android.permission.PACKAGE_USAGE_STATS",
+        "android.permission.BIND_ACCESSIBILITY_SERVICE",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      "expo-notifications",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35
+          }
+        }
+      ]
+    ],
+    "scheme": "palavraprimeiro",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
