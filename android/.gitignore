@@ -1,0 +1,10 @@
+# Android (generated)
+/build/
+/.gradle/
+/.idea/
+/local.properties
+*.iml
+
+# Keystores
+*.keystore
+*.jks
