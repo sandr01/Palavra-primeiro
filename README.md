@@ -1,4 +1,4 @@
-# ✝️ Palavra Primeiro
+﻿# ✝️ Palavra Primeiro
 
 ![CI](https://github.com/sandr01/Palavra-primeiro/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
