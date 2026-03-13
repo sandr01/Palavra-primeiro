@@ -1,5 +1,6 @@
 // src/store/appStore.ts
 import { create } from 'zustand';
+import type { StoreApi, UseBoundStore } from 'zustand';
 import { MMKV } from 'react-native-mmkv';
 import type { BlockedApp } from '../services/blockerService';
 import type { TranslationKey } from '../services/bibleService';
@@ -105,7 +106,8 @@ function todayISO(): string {
 
 // ─── Store ───────────────────────────────────────────────────────────────────
 
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore: UseBoundStore<StoreApi<AppState>> = create<AppState>()(
+  (set, get) => ({
   blockedApps: POPULAR_APPS.map((app) => ({
     ...app,
     isBlocked: false,
@@ -247,7 +249,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       currentStreak: stats.currentStreak,
     });
   },
-}));
+  })
+);
 
 function getPreviousDay(dateStr: string): string {
   const date = new Date(dateStr);

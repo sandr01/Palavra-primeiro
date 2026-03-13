@@ -17,6 +17,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import { useAppStore } from '../store/appStore';
+import type { AppState } from '../store/appStore';
 import { getVerseOfDay, type Verse } from '../services/bibleService';
 import { colors, spacing, radius, fonts, shadows } from '../constants/theme';
 
@@ -24,7 +25,8 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<any>();
 
-  const { userName, stats, blockedApps, translation } = useAppStore();
+  const { userName, stats, blockedApps, translation } =
+    useAppStore() as AppState;
   const [verse, setVerse] = useState<Verse | null>(null);
   const [loadingVerse, setLoadingVerse] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -181,7 +183,7 @@ function SectionLabel({ text }: { text: string }) {
   return <Text style={styles.sectionLabel}>{text}</Text>;
 }
 
-function AppRow({ app }: { app: ReturnType<typeof useAppStore>['blockedApps'][0] }) {
+function AppRow({ app }: { app: AppState['blockedApps'][0] }) {
   const appEmoji = getAppEmoji(app.id);
   return (
     <View style={styles.appRow}>

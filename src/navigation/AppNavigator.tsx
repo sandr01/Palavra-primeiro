@@ -16,14 +16,26 @@ import { useAppStore } from '../store/appStore';
 import { subscribeToBlockerEvents } from '../services/blockerService';
 import { colors } from '../constants/theme';
 
-const Tab = createBottomTabNavigator();
-const Root = createNativeStackNavigator();
+type MainTabParamList = {
+  Início: undefined;
+  Progresso: undefined;
+  Apps: undefined;
+};
 
-// ─── Tab Navigator (telas principais) ───────────────────────────────────────
+type RootStackParamList = {
+  Onboarding: undefined;
+  Main: undefined;
+};
+
+const Tab = createBottomTabNavigator<MainTabParamList>();
+const Root = createNativeStackNavigator<RootStackParamList>();
+
+// ─── Tab Navigator (telas principais) ─────────────────────────────────────────
 
 function MainTabs() {
   return (
     <Tab.Navigator
+      id="MainTabs"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
@@ -42,7 +54,9 @@ function MainTabs() {
             Progresso: 'bar-chart-2',
             Apps: 'shield',
           };
-          return <Feather name={icons[route.name] ?? 'circle'} size={size} color={color} />;
+          return (
+            <Feather name={icons[route.name] ?? 'circle'} size={size} color={color} />
+          );
         },
       })}
     >
@@ -53,11 +67,10 @@ function MainTabs() {
   );
 }
 
-// ─── Root Navigator (com overlay de bloqueio) ────────────────────────────────
+// ─── Root Navigator (com overlay de bloqueio) ─────────────────────────────────
 
 function AppWithBlocker() {
-  const { pendingBlockedApp, triggerBlocker, dismissBlocker, logReading } =
-    useAppStore();
+  const { pendingBlockedApp, triggerBlocker, dismissBlocker } = useAppStore();
 
   // Escuta eventos do serviço nativo (quando um app bloqueado é aberto)
   useEffect(() => {
@@ -91,7 +104,7 @@ function AppWithBlocker() {
   );
 }
 
-// ─── Navigator raiz (com onboarding) ────────────────────────────────────────
+// ─── Navigator raiz (com onboarding) ──────────────────────────────────────────
 
 export default function AppNavigator() {
   const { onboardingDone, loadPersistedState } = useAppStore();
@@ -102,7 +115,7 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer>
-      <Root.Navigator screenOptions={{ headerShown: false }}>
+      <Root.Navigator id="Root" screenOptions={{ headerShown: false }}>
         {!onboardingDone ? (
           <Root.Screen name="Onboarding" component={OnboardingScreen} />
         ) : (

@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
 import { useAppStore } from '../store/appStore';
+import type { AppState } from '../store/appStore';
 import {
   checkUsageStatsPermission,
   checkAccessibilityPermission,
@@ -44,7 +45,8 @@ const APP_CATEGORIES = [
 
 export default function AppsScreen() {
   const insets = useSafeAreaInsets();
-  const { blockedApps, toggleAppBlock, triggerBlocker } = useAppStore();
+  const { blockedApps, toggleAppBlock, triggerBlocker } =
+    useAppStore() as AppState;
   const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
   const nativeAvailable = isNativeBlockerAvailable();
 
@@ -216,7 +218,7 @@ function AppToggleRow({
   app,
   onToggle,
 }: {
-  app: ReturnType<typeof useAppStore>['blockedApps'][0];
+  app: AppState['blockedApps'][0];
   onToggle: () => void;
 }) {
   const emoji = getAppEmoji(app.id);
