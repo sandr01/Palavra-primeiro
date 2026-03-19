@@ -14,6 +14,7 @@ import {
   Animated,
   StatusBar,
   BackHandler,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,6 +22,7 @@ import { Feather } from '@expo/vector-icons';
 
 import { useAppStore } from '../store/appStore';
 import { getRandomVerse, type Verse } from '../services/bibleService';
+import { releaseBlockedApp } from '../services/blockerService';
 import { colors, spacing, radius } from '../constants/theme';
 
 interface Props {
@@ -87,7 +89,7 @@ export default function BlockerOverlay({
     };
   }, [translation]);
 
-  function handleRelease() {
+  async function handleRelease() {
     if (!hasRead || !verse) return;
 
     logReading({
@@ -97,6 +99,10 @@ export default function BlockerOverlay({
       skipped: false,
     });
 
+    const openedApp = await releaseBlockedApp(appPackage);
+    if (Platform.OS === 'android' && !openedApp) {
+      return;
+    }
     onRelease();
   }
 

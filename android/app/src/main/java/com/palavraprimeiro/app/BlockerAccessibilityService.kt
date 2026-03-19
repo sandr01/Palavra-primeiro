@@ -10,6 +10,24 @@ class BlockerAccessibilityService : AccessibilityService() {
     if (event?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
     val packageName = event.packageName?.toString() ?: return
 
+    val releasedPackageName = BlockerModule.releasedPackageName
+    val releasedPackageUntilMs = BlockerModule.releasedPackageUntilMs
+    if (
+      releasedPackageName != null &&
+      packageName == releasedPackageName &&
+      System.currentTimeMillis() <= releasedPackageUntilMs
+    ) {
+      return
+    }
+
+    if (
+      releasedPackageName != null &&
+      System.currentTimeMillis() > releasedPackageUntilMs
+    ) {
+      BlockerModule.releasedPackageName = null
+      BlockerModule.releasedPackageUntilMs = 0L
+    }
+
     if (packageName in BlockerModule.blockedPackages) {
       val displayName = getDisplayName(packageName)
       BlockerModule.instance?.emitAppBlocked(packageName, displayName)

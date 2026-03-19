@@ -6,18 +6,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Dimensions,
-  FlatList,
   Animated,
-  LayoutChangeEvent,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAppStore } from '../store/appStore';
 import { colors, spacing, radius } from '../constants/theme';
-
-const { width: initialWidth } = Dimensions.get('window');
 
 const STEPS = [
   {
@@ -52,18 +47,13 @@ export default function OnboardingScreen() {
 
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
-  const [listWidth, setListWidth] = useState(initialWidth);
-  const flatListRef = useRef<FlatList>(null);
   const progressAnim = useRef(new Animated.Value(0)).current;
+  const currentStep = STEPS[step];
 
   function goNext() {
     if (step < STEPS.length - 1) {
       const next = step + 1;
       setStep(next);
-      flatListRef.current?.scrollToOffset({
-        offset: listWidth * next,
-        animated: true,
-      });
       Animated.timing(progressAnim, {
         toValue: next / (STEPS.length - 1),
         duration: 300,
@@ -102,56 +92,23 @@ export default function OnboardingScreen() {
       </View>
 
       {/* Slides */}
-      <FlatList
-        ref={flatListRef}
-        data={STEPS}
-        horizontal
-        pagingEnabled
-        scrollEnabled={false}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(_, i) => i.toString()}
-        onLayout={(e: LayoutChangeEvent) => {
-          const w = Math.round(e.nativeEvent.layout.width);
-          if (w && w !== listWidth) {
-            setListWidth(w);
-            flatListRef.current?.scrollToOffset({
-              offset: w * step,
-              animated: false,
-            });
-          }
-        }}
-        getItemLayout={(_, index) => ({
-          length: listWidth,
-          offset: listWidth * index,
-          index,
-        })}
-        onScrollToIndexFailed={({ index }) => {
-          setTimeout(() => {
-            flatListRef.current?.scrollToIndex({ index, animated: true });
-          }, 50);
-        }}
-        snapToInterval={listWidth}
-        decelerationRate="fast"
-        renderItem={({ item }) => (
-          <View style={[styles.slide, { width: listWidth }]}>
-            <Text style={styles.emoji}>{item.emoji}</Text>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.description}>{item.description}</Text>
+      <View style={styles.slide}>
+        <Text style={styles.emoji}>{currentStep.emoji}</Text>
+        <Text style={styles.title}>{currentStep.title}</Text>
+        <Text style={styles.description}>{currentStep.description}</Text>
 
-            {item.hasInput && (
-              <TextInput
-                style={styles.input}
-                placeholder="Seu nome..."
-                placeholderTextColor="rgba(200,180,220,0.5)"
-                value={name}
-                onChangeText={setName}
-                autoFocus
-                maxLength={30}
-              />
-            )}
-          </View>
+        {currentStep.hasInput && (
+          <TextInput
+            style={styles.input}
+            placeholder="Seu nome..."
+            placeholderTextColor="rgba(200,180,220,0.5)"
+            value={name}
+            onChangeText={setName}
+            autoFocus
+            maxLength={30}
+          />
         )}
-      />
+      </View>
 
       {/* Botão */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.lg }]}>

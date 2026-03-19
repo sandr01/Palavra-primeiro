@@ -23,6 +23,12 @@ class BlockerModule(private val reactContext: ReactApplicationContext) :
     var blockedPackages: Set<String> = emptySet()
 
     @Volatile
+    var releasedPackageName: String? = null
+
+    @Volatile
+    var releasedPackageUntilMs: Long = 0L
+
+    @Volatile
     var instance: BlockerModule? = null
   }
 
@@ -95,9 +101,32 @@ class BlockerModule(private val reactContext: ReactApplicationContext) :
   @ReactMethod
   fun stopForegroundService(promise: Promise) {
     blockedPackages = emptySet()
+    releasedPackageName = null
+    releasedPackageUntilMs = 0L
     val serviceIntent = Intent(reactContext, BlockerForegroundService::class.java)
     reactContext.stopService(serviceIntent)
     promise.resolve(null)
+  }
+
+  @ReactMethod
+  fun releaseBlockedApp(packageName: String, promise: Promise) {
+    try {
+      val launchIntent = reactContext.packageManager.getLaunchIntentForPackage(packageName)
+      if (launchIntent == null) {
+        promise.resolve(false)
+        return
+      }
+
+      releasedPackageName = packageName
+      releasedPackageUntilMs = System.currentTimeMillis() + 5000L
+      launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
+      reactContext.startActivity(launchIntent)
+      promise.resolve(true)
+    } catch (e: Exception) {
+      releasedPackageName = null
+      releasedPackageUntilMs = 0L
+      promise.reject("OPEN_BLOCKED_APP_FAILED", e)
+    }
   }
 
   // Usage stats

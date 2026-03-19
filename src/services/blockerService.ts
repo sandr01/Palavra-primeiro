@@ -127,6 +127,11 @@ export function stopBlockerService(): void {
   }
 }
 
+export async function releaseBlockedApp(packageName: string): Promise<boolean> {
+  if (Platform.OS !== 'android') return false;
+  return BlockerModule?.releaseBlockedApp?.(packageName) ?? false;
+}
+
 // ─── Eventos (nativo → JS) ──────────────────────────────────────────────────
 
 export type BlockerEvent = {
